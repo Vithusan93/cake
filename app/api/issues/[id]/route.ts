@@ -27,4 +27,18 @@ export async function PATCH(
   return NextResponse.json(updatesIssue, { status: 200 });
 }
 
-//https://github.com/vercel/next.js/issues/74127
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const issue = await prisma.issue.findUnique({
+    where: { id: parseInt(params.id) },
+  });
+
+  if (!issue)
+    return NextResponse.json({ error: "Invalid issue" }, { status: 404 });
+  await prisma.issue.delete({
+    where: { id: issue.id },
+  });
+  return NextResponse.json({});
+}
